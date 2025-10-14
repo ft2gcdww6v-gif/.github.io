@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GitHub 文件管理器</title>
+    <style>
+        body { font-family: Arial; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .container { background: #f5f5f5; padding: 20px; border-radius: 8px; }
+        .input-group { margin: 10px 0; }
+        input, textarea, button { width: 100%; padding: 8px; margin: 5px 0; }
+        button { background: #0366d6; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0256b9; }
+        .log { background: #333; color: #0f0; padding: 10px; margin: 10px 0; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GitHub Pages 文件管理器</h1>
+        
+        <div class="input-group">
+            <input type="text" id="filePath" placeholder="文件路径，如: data/config.json">
+        </div>
+        
+        <div class="input-group">
+            <textarea id="fileContent" placeholder="文件内容" rows="10"></textarea>
+        </div>
+        
+        <div class="input-group">
+            <input type="text" id="commitMessage" placeholder="提交信息" value="更新文件">
+        </div>
+        
+        <button onclick="readFile()">读取文件</button>
+        <button onclick="writeFile()">写入文件</button>
+        <button onclick="deleteFile()">删除文件</button>
+        <button onclick="listFiles()">列出文件</button>
+        
+        <div id="log" class="log"></div>
+    </div>
+
+    <script>
+        // 这里应该从安全的地方获取 token
+        const fileManager = new GitHubFileManager(
+            '你的用户名',
+            '你的用户名.github.io',
+            '你的token'
+        );
+
+        function log(message) {
+            const logElement = document.getElementById('log');
+            logElement.innerHTML = message + '\n' + logElement.innerHTML;
+        }
+
+        async function readFile() {
+            const filePath = document.getElementById('filePath').value;
+            if (!filePath) {
+                log('❌ 请输入文件路径');
+                return;
+            }
+            
+            try {
+                log('📖 正在读取文件...');
+                const file = await fileManager.getFile(filePath);
+                document.getElementById('fileContent').value = file.content;
+                log('✅ 文件读取成功');
+            } catch (error) {
+                log(`❌ 读取失败: ${error.message}`);
+            }
+        }
+
+        async function writeFile() {
+            const filePath = document.getElementById('filePath').value;
+            const content = document.getElementById('fileContent').value;
+            const message = document.getElementById('commitMessage').value;
+            
+            if (!filePath || !content) {
+                log('❌ 文件路径和内容不能为空');
+                return;
+            }
+            
+            try {
+                log('💾 正在写入文件...');
+                await fileManager.createOrUpdateFile(filePath, content, message);
+                log('✅ 文件写入成功');
+            } catch (error) {
+                log(`❌ 写入失败: ${error.message}`);
+            }
+        }
+
+        async function deleteFile() {
+            const filePath = document.getElementById('filePath').value;
+            const message = document.getElementById('commitMessage').value;
+            
+            if (!filePath) {
+                log('❌ 请输入文件路径');
+                return;
+            }
+            
+            if (!confirm(`确定要删除 ${filePath} 吗？`)) return;
+            
+            try {
+                log('🗑️ 正在删除文件...');
+                await fileManager.deleteFile(filePath, message);
+                log('✅ 文件删除成功');
+                document.getElementById('filePath').value = '';
+                document.getElementById('fileContent').value = '';
+            } catch (error) {
+                log(`❌ 删除失败: ${error.message}`);
+            }
+        }
+
+        async function listFiles() {
+            try {
+                log('📁 正在列出文件...');
+                const files = await fileManager.listDirectory();
+                let fileList = '仓库根目录文件:\n';
+                files.forEach(file => {
+                    fileList += `${file.type === 'dir' ? '📁' : '📄'} ${file.path}\n`;
+                });
+                log(fileList);
+            } catch (error) {
+                log(`❌ 列出文件失败: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html>
