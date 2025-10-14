@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的第一个 GitHub Pages 网站</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .feature {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 欢迎来到我的网站！</h1>
+        <p>这个网站托管在 GitHub Pages 上</p>
+        
+        <div class="feature">
+            <h3>🚀 功能特性</h3>
+            <ul>
+                <li>免费托管</li>
+                <li>自动 HTTPS</li>
+                <li>自定义域名支持</li>
+                <li>持续部署</li>
+            </ul>
+        </div>
+        
+        <div class="feature">
+            <h3>📝 技术栈</h3>
+            <ul>
+                <li>HTML5</li>
+                <li>CSS3</li>
+                <li>JavaScript</li>
+                <li>GitHub Pages</li>
+            </ul>
+        </div>
+        
+        <button onclick="showMessage()">点击测试 JavaScript</button>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        function showMessage() {
+            const messages = [
+                "Hello World!",
+                "GitHub Pages 真棒！",
+                "这是我的第一个网站",
+                "感谢访问！"
+            ];
+            const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+            document.getElementById('message').textContent = randomMsg;
+        }
+        
+        // 页面加载完成后的动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.feature');
+            elements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    el.style.transition = 'all 0.6s ease';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>
